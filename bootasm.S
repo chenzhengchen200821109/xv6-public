@@ -20,6 +20,7 @@ start:
 
   # Physical address line A20 is tied to zero so that the first PCs 
   # with 2 MB would run software that assumed 1 MB.  Undo that.
+  # A20问题
 seta20.1:
   inb     $0x64,%al               # Wait for not busy
   testb   $0x2,%al
@@ -39,6 +40,7 @@ seta20.2:
   # Switch from real to protected mode.  Use a bootstrap GDT that makes
   # virtual addresses map directly to physical addresses so that the
   # effective memory map doesn't change during the transition.
+  # 从实模式切换到保护模式，虚拟地址的映射没有变化
   lgdt    gdtdesc
   movl    %cr0, %eax
   orl     $CR0_PE, %eax
@@ -48,17 +50,17 @@ seta20.2:
   # Complete the transition to 32-bit protected mode by using a long jmp
   # to reload %cs and %eip.  The segment descriptors are set up with no
   # translation, so that the mapping is still the identity mapping.
-  ljmp    $(SEG_KCODE<<3), $start32
+  ljmp    $(SEG_KCODE<<3), $start32      #内核代码段的选择子
 
 .code32  # Tell assembler to generate 32-bit code now.
 start32:
   # Set up the protected-mode data segment registers
-  movw    $(SEG_KDATA<<3), %ax    # Our data segment selector
+  movw    $(SEG_KDATA<<3), %ax    # Our data segment selector 内核数据段的选择子
   movw    %ax, %ds                # -> DS: Data Segment
   movw    %ax, %es                # -> ES: Extra Segment
   movw    %ax, %ss                # -> SS: Stack Segment
   movw    $0, %ax                 # Zero segments not ready for use
-  movw    %ax, %fs                # -> FS
+  movw    %ax, %fs                # -> FS 两个额外的段寄存器
   movw    %ax, %gs                # -> GS
 
   # Set up the stack pointer and call into C.
@@ -75,6 +77,7 @@ start32:
 spin:
   jmp     spin
 
+# 启动时的全局描述表
 # Bootstrap GDT
 .p2align 2                                # force 4 byte alignment
 gdt:
@@ -82,6 +85,7 @@ gdt:
   SEG_ASM(STA_X|STA_R, 0x0, 0xffffffff)   # code seg
   SEG_ASM(STA_W, 0x0, 0xffffffff)         # data seg
 
+# 启动时的全局描述符
 gdtdesc:
   .word   (gdtdesc - gdt - 1)             # sizeof(gdt) - 1
   .long   gdt                             # address gdt

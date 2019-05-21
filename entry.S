@@ -1,7 +1,7 @@
 # The xv6 kernel starts executing in this file. This file is linked with
 # the kernel C code, so it can refer to kernel symbols such as main().
 # The boot block (bootasm.S and bootmain.c) jumps to entry below.
-        
+#        
 # Multiboot header, for multiboot boot loaders like GNU Grub.
 # http://www.gnu.org/software/grub/manual/multiboot/multiboot.html
 #
@@ -38,7 +38,7 @@ multiboot_header:
 # Since we haven't set up virtual memory yet, our entry point is
 # the physical address of 'entry'.
 .globl _start
-_start = V2P_WO(entry)
+_start = V2P_WO(entry) #从kernel.ld中可以看出链接是从虚拟地址0x80100000开始的
 
 # Entering xv6 on boot processor, with paging off.
 .globl entry
@@ -62,7 +62,7 @@ entry:
   # high addresses. The indirect call is needed because
   # the assembler produces a PC-relative instruction
   # for a direct jump.
-  mov $main, %eax
+  mov $main, %eax           #main函数在main.c文件中
   jmp *%eax
 
-.comm stack, KSTACKSIZE
+.comm stack, KSTACKSIZE     #在ld链接过程中分配一个命名的空间大小为KSTACKSIZE=4096
