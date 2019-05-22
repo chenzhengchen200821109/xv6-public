@@ -5,6 +5,14 @@
 # Save the current registers on the stack, creating
 # a struct context, and save its address in *old.
 # Switch stacks to new and pop previously-saved registers.
+#
+# struct context {
+#   uint edi;
+#   uint esi;
+#   uint ebx;
+#   uint ebp;
+#   uint eip;
+# };
 
 .globl swtch
 swtch:
