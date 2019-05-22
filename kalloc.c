@@ -14,7 +14,7 @@ extern char end[]; // first address after kernel loaded from ELF file
                    // defined by the kernel linker script in kernel.ld
 
 struct run {
-  struct run *next;
+  struct run *next; // 指向上一个空闲页
 };
 
 struct {
@@ -25,7 +25,7 @@ struct {
 
 // Initialization happens in two phases.
 // 1. main() calls kinit1() while still using entrypgdir to place just
-// the pages mapped by entrypgdir on free list.
+// the pages mapped by entrypgdir on free list. 虚拟地址空间是0x80000000 ~ (0x80000000+4MB)
 // 2. main() calls kinit2() with the rest of the physical pages
 // after installing a full page table that maps them on all cores.
 void
@@ -61,7 +61,7 @@ kfree(char *v)
 {
   struct run *r;
 
-  if((uint)v % PGSIZE || v < end || V2P(v) >= PHYSTOP)
+  if((uint)v % PGSIZE || v < end || V2P(v) >= PHYSTOP) // PGSIZE=4096, PHYSTOP=0xE000000(224MB)
     panic("kfree");
 
   // Fill with junk to catch dangling refs.
