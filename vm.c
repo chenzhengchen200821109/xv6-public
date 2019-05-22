@@ -130,7 +130,7 @@ setupkvm(void)
   pde_t *pgdir;
   struct kmap *k;
 
-  /* 分配了一个4KB内存 */
+  /* 分配一个页目录表，一个页目录表可以寻址4GB */
   if((pgdir = (pde_t*)kalloc()) == 0)
     return 0;
   memset(pgdir, 0, PGSIZE);

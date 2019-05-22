@@ -18,9 +18,11 @@ int
 main(void)
 {
   kinit1(end, P2V(4*1024*1024)); // phys page allocator, end是内核数据段的结束地址
+  /* 分配一个页目录表，并为内核虚拟空间作映射 */
   kvmalloc();      // kernel page table
   mpinit();        // detect other processors
   lapicinit();     // interrupt controller
+  /* 初始化各CPU的内核空间和用户空间的段描述符 */
   seginit();       // segment descriptors
   picinit();       // disable pic
   ioapicinit();    // another interrupt controller

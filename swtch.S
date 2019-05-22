@@ -16,8 +16,8 @@
 
 .globl swtch
 swtch:
-  movl 4(%esp), %eax
-  movl 8(%esp), %edx
+  movl 4(%esp), %eax    #指向*old
+  movl 8(%esp), %edx    #指向new
 
   # Save old callee-saved registers
   pushl %ebp

@@ -9,7 +9,7 @@
 
 struct {
   struct spinlock lock;
-  struct proc proc[NPROC];
+  struct proc proc[NPROC];  //NPROC=64最多同时支持64个进程
 } ptable;
 
 static struct proc *initproc;
