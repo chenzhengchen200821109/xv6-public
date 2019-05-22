@@ -3,6 +3,7 @@
 
 OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
 OUTPUT_ARCH(i386)
+/* 设置程序入口点 */
 ENTRY(_start)
 
 SECTIONS
@@ -11,7 +12,7 @@ SECTIONS
         /* Must be equal to KERNLINK */
 	. = 0x80100000;
 
-	.text : AT(0x100000) {
+	.text : AT(0x100000) { /* .text段的加载地址为1MB处 */
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 	}
 
@@ -25,7 +26,7 @@ SECTIONS
 	.stab : {
 		PROVIDE(__STAB_BEGIN__ = .);
 		*(.stab);
-		PROVIDE(__STAB_END__ = .);
+		PROVIDE(__STAB_END__ = .); 
 		BYTE(0)		/* Force the linker to allocate space
 				   for this section */
 	}
@@ -60,7 +61,7 @@ SECTIONS
 		*(.bss)
 	}
 
-	PROVIDE(end = .);
+	PROVIDE(end = .); /* Define the 'end' symbol to this value */
 
 	/DISCARD/ : {
 		*(.eh_frame .note.GNU-stack)
